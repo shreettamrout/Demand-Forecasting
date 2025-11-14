@@ -1,0 +1,72 @@
+# =====================================================================
+# Example Configuration File for Demand Forecasting using TFT
+# =====================================================================
+
+# -----------------------------
+# DATA CONFIGURATION
+# -----------------------------
+data:
+  csv_path: "data/retail_demand.csv"     # Path to your dataset file
+  date_col: "date"                       # Column name for timestamps
+  group_id: "store_id"                   # Column that uniquely identifies each time series
+  target: "demand"                       # Column to forecast
+  time_idx: "time_idx"                   # Column for time index (auto-created during preprocessing)
+  
+  # Encoder/decoder sequence lengths
+  min_encoder_length: 30                 # Minimum history window (e.g., 1 month)
+  max_encoder_length: 90                 # Maximum history window
+  max_prediction_length: 14              # Forecast horizon (e.g., 14 days)
+
+  # Feature configuration
+  static_categoricals: ["store_type", "region"]
+  static_reals: ["avg_monthly_sales"]
+  time_varying_known_categoricals: ["month", "weekday", "is_weekend"]
+  time_varying_known_reals: ["time_idx", "dayofyear", "avg_temp", "promotion_flag"]
+  time_varying_unknown_reals: ["demand"]
+
+# -----------------------------
+# TRAINING CONFIGURATION
+# -----------------------------
+training:
+  seed: 42
+  batch_size: 64
+  max_epochs: 40
+  gpus: 1                     # Set 0 for CPU, 1 for single GPU
+  learning_rate: 1e-3
+  grad_clip: 0.1
+  early_stop_patience: 6
+
+# -----------------------------
+# MODEL HYPERPARAMETERS
+# -----------------------------
+model:
+  hidden_size: 32             # Hidden units in LSTM/Transformer layers
+  attention_head_size: 4
+  hidden_continuous_size: 16
+  dropout: 0.1
+  output_size: 7              # Number of quantiles for QuantileLoss
+
+# -----------------------------
+# OPTUNA (HYPERPARAMETER SEARCH)
+# -----------------------------
+optuna:
+  enabled: false              # Set true to enable Optuna-based tuning
+  n_trials: 25
+  timeout: 3600               # In seconds (1 hour)
+  optimize_metric: "val_loss"
+
+# -----------------------------
+# OUTPUT DIRECTORIES
+# -----------------------------
+output:
+  models_dir: "models"
+  logs_dir: "logs"
+  predictions_dir: "predictions"
+
+# -----------------------------
+# LOGGING & DEBUG
+# -----------------------------
+logging:
+  print_config: true
+  save_checkpoints: true
+  verbose: true

@@ -1,0 +1,59 @@
+# ==============================================================
+# Configuration File for Demand Forecasting using TFT
+# ==============================================================
+
+# -----------------------------
+# DATA CONFIGURATION
+# -----------------------------
+data:
+  csv_path: "data/demand.csv"         # Path to your dataset CSV
+  date_col: "date"                    # Column name for dates
+  group_id: "store_id"                # Identifier for time series (store_id, product_id, etc.)
+  target: "demand"                    # Column name for target variable
+  time_idx: "time_idx"                # Time index column (will be added by preprocessing)
+  min_encoder_length: 30              # Minimum number of past timesteps used by encoder
+  max_encoder_length: 90              # Maximum number of past timesteps used by encoder
+  max_prediction_length: 14           # Forecast horizon (e.g., 14 days)
+  static_categoricals: []             # e.g. ["store_type", "region"]
+  static_reals: []                    # e.g. ["avg_monthly_sales"]
+  time_varying_known_categoricals: ["month", "weekday", "is_weekend"]
+  time_varying_known_reals: ["time_idx", "dayofyear"]
+  time_varying_unknown_reals: ["demand"]  # Usually the target variable
+
+# -----------------------------
+# TRAINING CONFIGURATION
+# -----------------------------
+training:
+  seed: 42
+  batch_size: 64
+  max_epochs: 30
+  gpus: 1                             # Set 0 for CPU or 1 for single GPU
+  learning_rate: 1e-3
+  grad_clip: 0.1
+  early_stop_patience: 5
+
+# -----------------------------
+# MODEL HYPERPARAMETERS
+# -----------------------------
+model:
+  hidden_size: 32
+  attention_head_size: 4
+  hidden_continuous_size: 16
+  dropout: 0.1
+  output_size: 7                      # Quantile outputs (0.1, 0.25, 0.5, 0.75, 0.9, etc.)
+
+# -----------------------------
+# OPTIMIZATION / SEARCH
+# -----------------------------
+optuna:
+  enabled: false                      # Set to true for hyperparameter tuning
+  n_trials: 30
+  timeout: 3600                       # seconds
+
+# -----------------------------
+# OUTPUT DIRECTORIES
+# -----------------------------
+output:
+  models_dir: "models"
+  logs_dir: "logs"
+  predictions_dir: "predictions"
