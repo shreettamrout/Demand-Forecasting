@@ -6,7 +6,7 @@
 # DATA CONFIGURATION
 # -----------------------------
 data:
-  csv_path: "data/demand.csv"         # Path to your dataset CSV
+  csv_path: "home/data/demand.csv"         # Path to your dataset CSV
   date_col: "date"                    # Column name for dates
   group_id: "store_id"                # Identifier for time series (store_id, product_id, etc.)
   target: "demand"                    # Column name for target variable
@@ -57,3 +57,4 @@ output:
   models_dir: "models"
   logs_dir: "logs"
   predictions_dir: "predictions"
+
